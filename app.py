@@ -8,12 +8,12 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a strong, random secret key
 
 # MongoDB connection configuration for user authentication
-client_auth = MongoClient('mongodb://localhost:27017/lifeexpectancy')  # Replace with your MongoDB connection string
+client_auth = MongoClient('mongodb://localhost:27017/lifeexpectancy', serverSelectionTimeoutMS=5000)  # MongoDB connection with timeout
 db_auth = client_auth['Life']  # Replace with your database name
 users_collection = db_auth['lep']  # Replace with your collection name
 
 # MongoDB connection configuration for form data
-client_data = MongoClient('mongodb://localhost:27017')  # Replace with your MongoDB connection string
+client_data = MongoClient('mongodb://localhost:27017', serverSelectionTimeoutMS=5000)  # MongoDB connection with timeout
 db_data = client_data['life_expectancy']  # Replace with your database name
 collection_data = db_data['form_data']  # Replace with your collection name
 
@@ -124,7 +124,6 @@ def predict():
         return render_template("result.html", prediction_text="Your Predicted Life Expectancy is: {}".format(prediction), data_from_db=data_from_db)
 
     return render_template("predict.html")
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
-
