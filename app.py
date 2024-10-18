@@ -3,19 +3,21 @@ from flask import Flask, request, render_template, redirect, url_for, flash, ses
 from pymongo import MongoClient
 import bcrypt
 import pickle
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a strong, random secret key
 
 # MongoDB connection configuration for user authentication
-client_auth = MongoClient('mongodb://localhost:27017/lifeexpectancy', serverSelectionTimeoutMS=5000)  # MongoDB connection with timeout
+client_auth = MongoClient("mongodb+srv://Life-Expectancy-Prediction:kSqGGoNIwI2aUgsg@cluster0.0tc3m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db_auth = client_auth['Life']  # Replace with your database name
 users_collection = db_auth['lep']  # Replace with your collection name
 
 # MongoDB connection configuration for form data
-client_data = MongoClient('mongodb://localhost:27017', serverSelectionTimeoutMS=5000)  # MongoDB connection with timeout
+client_data = MongoClient("mongodb+srv://Life-Expectancy-Prediction:kSqGGoNIwI2aUgsg@cluster0.0tc3m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db_data = client_data['life_expectancy']  # Replace with your database name
 collection_data = db_data['form_data']  # Replace with your collection name
+
 
 # Load Pickle model
 model = pickle.load(open("model.pkl", "rb"))
@@ -94,7 +96,7 @@ def predict():
 
         # Store the form data in MongoDB with the associated username
         form_data = {
-            'Username': username,  # Associate the form data with the logged-in user
+            'Username': username,
             'Year': request.form.get('Year'),
             'AdultMortality': request.form.get('AdultMortality'),
             'InfantDeaths': request.form.get('InfantDeaths'),
@@ -114,7 +116,7 @@ def predict():
             'Thinness5_9years': request.form.get('Thinness5_9years'),
             'IncomeComposition': request.form.get('IncomeComposition'),
             'Schooling': request.form.get('Schooling'),
-            'Prediction': prediction[0]  # Store the prediction result
+            'Prediction': prediction[0]
         }
         collection_data.insert_one(form_data)
 
